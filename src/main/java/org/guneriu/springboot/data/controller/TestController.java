@@ -5,6 +5,10 @@ import org.guneriu.springboot.data.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,23 +33,28 @@ public class TestController {
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public Person person(@PathVariable Long id) {
+	public HttpEntity<Person> person(@PathVariable Long id) {
 		Person person = personService.find(id);
 		if (person == null) {
 			throw new PersonNotFoundException(id);
 		}
-		return person;
+		person.add(ControllerLinkBuilder.linkTo(TestController.class).slash(id).withSelfRel());
+		return new HttpEntity<Person>(person);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public void save(@RequestBody Person person) {
-		personService.save(person);
+	public ResponseEntity<Person> save(@RequestBody Person person) {
+		Person savedPerson = personService.save(person);
+		savedPerson.add(ControllerLinkBuilder.linkTo(TestController.class).slash(savedPerson.getPersonId()).withSelfRel());
+		return new ResponseEntity<Person>(savedPerson, HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
-	public void patch(@PathVariable Long id, @RequestBody Person person) {
-		person.setId(id);
-		personService.save(person);
+	public ResponseEntity<Person> patch(@PathVariable Long id, @RequestBody Person person) {
+		person.setPersonId(id);
+		Person savedPerson = personService.save(person);
+		savedPerson.add(ControllerLinkBuilder.linkTo(TestController.class).slash(savedPerson.getPersonId()).withSelfRel());
+		return new ResponseEntity<Person>(savedPerson, HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

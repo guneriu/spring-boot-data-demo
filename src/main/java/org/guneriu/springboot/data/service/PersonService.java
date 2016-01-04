@@ -14,20 +14,20 @@ public class PersonService {
 	@Autowired
 	private PersonRepository personRepository;
 	
-	public Person find(Long id) {
-		return personRepository.findOne(id);
+	public Person find(Long personId) {
+		return personRepository.findOne(personId);
 	}
 	
 	public Page<Person> findAll(int page, int count, Sort.Direction direction, String sortProperty) {
 		return personRepository.findAll(new PageRequest(page, count, direction, sortProperty));
 	}
 	
-	public void save(Person person) {
-		personRepository.save(person);
+	public Person save(Person person) {
+		return personRepository.save(person);
 	}
 	
-	public void delete(Long id) {
-		personRepository.delete(id);
+	public void delete(Long personId) {
+		personRepository.delete(personId);
 	}
 
 }

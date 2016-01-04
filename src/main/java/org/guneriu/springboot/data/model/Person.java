@@ -7,12 +7,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import org.springframework.hateoas.ResourceSupport;
+
 @Entity
-public class Person {
+public class Person extends ResourceSupport {
 	
 	@Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private long id;
+    private Long personId;
 	private String name;
 	private Integer age;
 	
@@ -43,18 +45,18 @@ public class Person {
 		this.address = address;
 	}
 
-	public long getId() {
-		return id;
+	public Long getPersonId() {
+		return personId;
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	public void setPersonId(Long personId) {
+		this.personId = personId;
 	}
 
 	@Override
 	public String toString() {
-		return "Person [id=" + id + ", name=" + name + ", age=" + age
-				+ ", address=" + address + "]";
+		return "Person [personId=" + personId + ", name=" + name + ", age="
+				+ age + ", address=" + address + "]";
 	}
 
 }
